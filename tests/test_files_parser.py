@@ -1,6 +1,6 @@
 import pathlib
 
-from files_parser import parse_all_files, read_xml_file, read_zip_file, read_zip_files
+from files_parser import parse_all_files, read_xml_file, read_zip_file, read_zip_files, parse_chunk
 
 filepath = pathlib.Path().absolute()
 
@@ -24,4 +24,12 @@ def test_read_zip_file():
 def test_read_zip_files():
     main_list = read_zip_files(filepath)
     print(main_list)
+    assert False
+
+
+def test_parse_chunk():
+    main_list = read_zip_files(filepath)
+    (c1, c2) = parse_chunk(main_list)
+
+    print(c1, c2)
     assert False

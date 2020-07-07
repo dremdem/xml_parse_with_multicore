@@ -49,18 +49,34 @@ def write_csv_file(filename: str, csv_list: list):
         csv_writer.writerows(csv_list)
 
 
+def parse_chunk(zip_list):
+
+    csv_list1 = []
+    csv_list2 = []
+
+    for element in zip_list:
+
+        id = element['id']
+        level = element['level']
+        csv_list1 += [[id, level]]
+
+        for o in element['objects']:
+            csv_list2 += [[id, o]]
+
+    return csv_list1, csv_list2
+
+
 def parse_all_files(filepath: str):
     """
     Parse all ZIP-file by filepath
     """
 
     # Structure of element in a main list:
-    # {<id>: {'level': <level>, 'objects': [<object_name1>, <object_name2>], ... }}
+    # [{id: '<id>', 'level': <level>, 'objects': [<object_name1>, <object_name2>], ... }]
 
     main_list = read_zip_files(filepath)
 
-    csv_list1 = []
-    csv_list2 = []
+    csv_list1, csv_list2 = parse_chunk(main_list)
 
     write_csv_file(os.path.join(filepath, 'output1.csv'), csv_list1)
     write_csv_file(os.path.join(filepath, 'output2.csv'), csv_list2)
