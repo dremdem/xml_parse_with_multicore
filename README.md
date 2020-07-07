@@ -5,10 +5,7 @@
 1. Make XML file
 2. Make ZIP 
 
-
-
 ## Part 2: Parse files
-
 
 1. Iterate over ZIP-files
 2. Load XML into the memory
