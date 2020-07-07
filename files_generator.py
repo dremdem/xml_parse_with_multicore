@@ -7,6 +7,8 @@ import zipfile
 import os
 import xml.etree.cElementTree as ET
 
+from utils import delete_files
+
 
 def get_random_string() -> str:
     string_length = random.randint(5, 30)
@@ -34,12 +36,6 @@ def generate_xml_file(filename: str, id_list: list):
     ET.ElementTree(root).write(filename)
 
 
-def delete_xml_files(filepath: str):
-    xml_files = (f for f in os.listdir(filepath) if f.endswith(".xml"))
-    for file in xml_files:
-        os.remove(os.path.join(filepath, file))
-
-
 def generate_zip_file(filename: str, filepath: str, number_of_xml: int, id_list: list):
     """
 
@@ -55,4 +51,4 @@ def generate_zip_file(filename: str, filepath: str, number_of_xml: int, id_list:
 
     z.close()
 
-    delete_xml_files(filepath)
+    delete_files(filepath, 'xml')

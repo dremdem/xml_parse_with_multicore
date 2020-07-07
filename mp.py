@@ -5,12 +5,17 @@ Main module for the test task
 import sys
 import pathlib
 import timeit
+import multiprocessing
 
 
 from files_generator import generate_zip_file
 from files_parser import parse_all_files
+from utils import delete_files
+
 
 if __name__ == '__main__':
+    cores_quantity = multiprocessing.cpu_count()
+    pool = multiprocessing.Pool(processes=cores_quantity)
 
     try:
         filepath = sys.argv[1]
@@ -29,6 +34,8 @@ if __name__ == '__main__':
 
     print(filepath)
 
+    delete_files(filepath, 'zip')
+
     # generate ZIP-files
 
     id_list = []
@@ -37,7 +44,7 @@ if __name__ == '__main__':
 
     # parse ZIP-files
     start = timeit.default_timer()
-    parse_all_files(filepath)
+    parse_all_files(filepath, pool, cores_quantity)
     stop = timeit.default_timer()
     execution_time = stop - start
 

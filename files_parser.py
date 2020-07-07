@@ -3,6 +3,7 @@ Parse ZIP-files by using multi-core processing
 """
 
 import os
+import sys
 import csv
 import zipfile
 import xml.etree.cElementTree as ET
@@ -38,7 +39,9 @@ def read_zip_files(filepath: str) -> list:
     main_list = []
 
     for file in [f for f in next(os.walk(filepath))[2] if f.endswith('.zip')]:
-        main_list += read_zip_file(file, main_list)
+        read_zip_file(file, main_list)
+
+    print(f'sys.getsizeof(main_list): {sys.getsizeof(main_list)}, len: {len(main_list)}')
 
     return main_list
 
@@ -66,7 +69,18 @@ def parse_chunk(zip_list):
     return csv_list1, csv_list2
 
 
-def parse_all_files(filepath: str):
+def list_by_chunks(main_list, size_of_chuck):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(main_list), size_of_chuck):
+        yield main_list[i:i + size_of_chuck]
+
+
+def doubler(number):
+    return number * 2
+
+
+def parse_all_files(filepath: str, pool, cores_quantity):
+
     """
     Parse all ZIP-file by filepath
     """
@@ -76,8 +90,18 @@ def parse_all_files(filepath: str):
 
     main_list = read_zip_files(filepath)
 
+    # brute case
     csv_list1, csv_list2 = parse_chunk(main_list)
 
-    write_csv_file(os.path.join(filepath, 'output1.csv'), csv_list1)
-    write_csv_file(os.path.join(filepath, 'output2.csv'), csv_list2)
+    # multi-core case
+    # len_of_chunk = len(main_list)//cores_quantity
+    #
+    #
+    # list_of_chunks = list(list_by_chunks(main_list, len_of_chunk))
+    # results = [pool.apply_async(parse_chunk, l1) for l1 in list_of_chunks]
+
+    pass
+
+    # write_csv_file(os.path.join(filepath, 'output1.csv'), csv_list1)
+    # write_csv_file(os.path.join(filepath, 'output2.csv'), csv_list2)
 
