@@ -10,6 +10,7 @@ up to 6 times at strong droplet, see in the test section at the end.
 
 ### Installation (fresh Ubuntu example)
 
+```shell script
 
 sudo apt update
 sudo apt install software-properties-common
@@ -25,14 +26,34 @@ cd xml_parse_with_multicore
 
 pipenv install 
 pipenv shell
+```
 
 
+### Usage
 
+####python mp.py -h 
+```
+XML generator and parser with a multiprocessing feature.
 
-### TESTS
+optional arguments:
+  -h, --help           show this help message and exit
+  -fp FILEPATH         File path for storing and reading XML-files. Current
+                       path by default.
+  -zn NUMBER_OF_ZIP    Number of ZIP-files for testing. 50 by default.
+  -xn NUMBER_OF_XML    Number of XML-files in the every ZIP-file. 100 by
+                       default.
+  -mp                  Enable multiprocessing. Disabled by default.
+  -cn NUMBER_OF_CORES  Number of cores. 8 by default
+```
+
+>Run in the /temp folder with multiprocessing, 4 core, 1000 ZIP-files, 300 XML-files in the ZIP
+```
+python mp.py -fp /temp -zn 1000 -xn 300 -mp -cn 4
+```
+### Performance tests
 
 MAC: MacOs 10.15.4, 2,6 GHZ, 4-core i7
-
+```
 [2020-07-08 21:09:43,307]  Started with the following parameters:
             - multiprocessing: False
             - number of ZIP-files: 1000
@@ -49,10 +70,11 @@ MAC: MacOs 10.15.4, 2,6 GHZ, 4-core i7
 [2020-07-08 21:11:24,989]  The ZIP-generation is done. Execution time is 43.631 seconds.
 [2020-07-08 21:11:26,828]  sys.getsizeof(main_list): 829000, len: 100000
 [2020-07-08 21:11:27,803]  The ZIP-parsing is done. Execution time is 2.814 seconds.
+```
+####DO: Droplet minimal:
 
-DO: Droplet minmal: 
 2 CPU/ 4 GB Memory / 25 GB Disk / AMS3 - Ubuntu 18.04.3 (LTS) x64
-
+``` 
 [2020-07-08 16:07:46,449]  Started with the following parameters:
             - multiprocessing: False
             - number of ZIP-files: 50
@@ -85,10 +107,11 @@ DO: Droplet minmal:
 [2020-07-08 16:09:16,080]  The ZIP-generation is done. Execution time is 4.667 seconds.
 [2020-07-08 16:09:17,552]  sys.getsizeof(main_list): 253000, len: 30000
 [2020-07-08 16:09:17,945]  The ZIP-parsing is done. Execution time is 1.865 seconds.
-
-DO: Droplet maximal: 
-
+```
+####DO: Droplet maximal: 
 32 CPU/64 GB Memory / 400 GB Disk / AMS3 - Ubuntu 18.04.3 (LTS) x64
+
+```
 
 [2020-07-08 18:06:03,924]  Started with the following parameters:
             - multiprocessing: False
@@ -106,6 +129,6 @@ DO: Droplet maximal:
 [2020-07-08 18:06:47,028]  The ZIP-generation is done. Execution time is 15.818 seconds.
 [2020-07-08 18:06:47,619]  sys.getsizeof(main_list): 829000, len: 100000
 [2020-07-08 18:06:48,580]  The ZIP-parsing is done. Execution time is 1.553 seconds.
-
+```
 
 
