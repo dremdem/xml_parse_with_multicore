@@ -6,7 +6,7 @@ This is the test task for the technical interview.
 The point is: demonstrate how multiprocessing could affect to parsing XML-files. 
 
 I was surprised: disk IO performance also was improved, 
-up to 6 times at strong droplet, see in the test section at the end.
+up to 6 times at strong droplet, [see](#performance-tests) in the test section at the end.
 
 ### Installation (fresh Ubuntu example)
 
