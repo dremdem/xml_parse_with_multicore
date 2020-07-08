@@ -35,8 +35,9 @@ pipenv shell
 
 ### Usage
 
-####python mp.py -h 
 ```
+python mp.py -h 
+
 XML generator and parser with a multiprocessing feature.
 
 optional arguments:
