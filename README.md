@@ -56,7 +56,7 @@ python mp.py -fp /temp -zn 1000 -xn 300 -mp -cn 4
 ```
 ### Performance tests
 
-MAC: MacOs 10.15.4, 2,6 GHZ, 4-core i7
+**MAC: MacOs 10.15.4, 2,6 GHZ, 4-core i7**
 ```
 [2020-07-08 21:09:43,307]  Started with the following parameters:
             - multiprocessing: False
@@ -75,7 +75,7 @@ MAC: MacOs 10.15.4, 2,6 GHZ, 4-core i7
 [2020-07-08 21:11:26,828]  sys.getsizeof(main_list): 829000, len: 100000
 [2020-07-08 21:11:27,803]  The ZIP-parsing is done. Execution time is 2.814 seconds.
 ```
-####DO: Droplet minimal:
+**DO: Droplet minimal:**
 
 2 CPU/ 4 GB Memory / 25 GB Disk / AMS3 - Ubuntu 18.04.3 (LTS) x64
 ``` 
@@ -112,7 +112,7 @@ MAC: MacOs 10.15.4, 2,6 GHZ, 4-core i7
 [2020-07-08 16:09:17,552]  sys.getsizeof(main_list): 253000, len: 30000
 [2020-07-08 16:09:17,945]  The ZIP-parsing is done. Execution time is 1.865 seconds.
 ```
-####DO: Droplet maximal: 
+**DO: Droplet maximal:**
 32 CPU/64 GB Memory / 400 GB Disk / AMS3 - Ubuntu 18.04.3 (LTS) x64
 
 ```
