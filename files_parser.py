@@ -5,6 +5,7 @@ Parse ZIP-files by using multi-core processing
 import os
 import sys
 import csv
+import logging
 import zipfile
 import xml.etree.cElementTree as ET
 
@@ -50,7 +51,7 @@ def read_zip_files(filepath: str, pool, cores_quantity, use_mp: bool = False) ->
         for file in [f for f in next(os.walk(filepath))[2] if f.endswith('.zip')]:
             main_list += read_zip_file(file)
 
-    print(f'sys.getsizeof(main_list): {sys.getsizeof(main_list)}, len: {len(main_list)}')
+    logging.info(f'sys.getsizeof(main_list): {sys.getsizeof(main_list)}, len: {len(main_list)}')
 
     return main_list
 
