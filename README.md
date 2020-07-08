@@ -3,6 +3,10 @@
 ### Description
 
 This is the test task for the technical interview.
+
+The original [assignment.txt](assignment.txt) in Russian language. 
+Let me know if you want, I could translate it to an English.  
+
 The point is: demonstrate how multiprocessing could affect to parsing XML-files. 
 
 I was surprised: disk IO performance also was improved, 
@@ -131,4 +135,10 @@ MAC: MacOs 10.15.4, 2,6 GHZ, 4-core i7
 [2020-07-08 18:06:48,580]  The ZIP-parsing is done. Execution time is 1.553 seconds.
 ```
 
+### Contributing 
+
+I'm open to any improvements and comments.
+Let's make this world better together :) 
+
+Cheers!
 
