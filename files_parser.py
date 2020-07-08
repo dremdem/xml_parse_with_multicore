@@ -10,7 +10,6 @@ import xml.etree.cElementTree as ET
 
 
 def read_xml_file(xml_file) -> dict:
-
     xml_dict = {}
 
     xml = ET.parse(xml_file)
@@ -24,7 +23,8 @@ def read_xml_file(xml_file) -> dict:
     return xml_dict
 
 
-def read_zip_file(filename: str, zip_list) -> list:
+def read_zip_file(filename: str) -> list:
+    zip_list = []
 
     with zipfile.ZipFile(filename) as z:
         for xml_file in [f.filename for f in z.infolist()]:
@@ -34,12 +34,21 @@ def read_zip_file(filename: str, zip_list) -> list:
     return zip_list
 
 
-def read_zip_files(filepath: str) -> list:
-
+def read_zip_files(filepath: str, pool, cores_quantity, use_mp: bool = False) -> list:
     main_list = []
 
-    for file in [f for f in next(os.walk(filepath))[2] if f.endswith('.zip')]:
-        read_zip_file(file, main_list)
+    zip_files = [f for f in next(os.walk(filepath))[2] if f.endswith('.zip')]
+
+    if use_mp:
+        chunk_size = len(zip_files) // cores_quantity
+        zip_files_chunks = list(list_by_chunks(zip_files, chunk_size))
+        for chunk in zip_files_chunks:
+            res = [pool.apply_async(read_zip_file, (file,)) for file in chunk]
+            for i in res:
+                main_list += i.get()
+    else:
+        for file in [f for f in next(os.walk(filepath))[2] if f.endswith('.zip')]:
+            main_list += read_zip_file(file)
 
     print(f'sys.getsizeof(main_list): {sys.getsizeof(main_list)}, len: {len(main_list)}')
 
@@ -53,7 +62,6 @@ def write_csv_file(filename: str, csv_list: list):
 
 
 def parse_chunk(zip_list):
-
     csv_list1 = []
     csv_list2 = []
 
@@ -75,12 +83,7 @@ def list_by_chunks(main_list, size_of_chuck):
         yield main_list[i:i + size_of_chuck]
 
 
-def doubler(number):
-    return number * 2
-
-
-def parse_all_files(filepath: str, pool, cores_quantity):
-
+def parse_all_files(filepath: str, pool, cores_quantity, use_mp: bool = False):
     """
     Parse all ZIP-file by filepath
     """
@@ -88,20 +91,22 @@ def parse_all_files(filepath: str, pool, cores_quantity):
     # Structure of element in a main list:
     # [{id: '<id>', 'level': <level>, 'objects': [<object_name1>, <object_name2>], ... }]
 
-    main_list = read_zip_files(filepath)
+    main_list = read_zip_files(filepath, pool, cores_quantity, use_mp=use_mp)
 
-    # brute case
-    csv_list1, csv_list2 = parse_chunk(main_list)
+    if use_mp:
+        len_of_chunk = len(main_list) // cores_quantity
 
-    # multi-core case
-    # len_of_chunk = len(main_list)//cores_quantity
-    #
-    #
-    # list_of_chunks = list(list_by_chunks(main_list, len_of_chunk))
-    # results = [pool.apply_async(parse_chunk, l1) for l1 in list_of_chunks]
+        list_of_chunks = list(list_by_chunks(main_list, len_of_chunk))
+        results = [pool.apply_async(parse_chunk, (l1,)) for l1 in list_of_chunks]
+        csv_list1 = []
+        csv_list2 = []
 
-    pass
+        for chunk in results:
+            for i in chunk.get():
+                csv_list1 += i[0]
+                csv_list2 += i[1]
+    else:
+        csv_list1, csv_list2 = parse_chunk(main_list)
 
-    # write_csv_file(os.path.join(filepath, 'output1.csv'), csv_list1)
-    # write_csv_file(os.path.join(filepath, 'output2.csv'), csv_list2)
-
+    write_csv_file(os.path.join(filepath, 'output1.csv'), csv_list1)
+    write_csv_file(os.path.join(filepath, 'output2.csv'), csv_list2)

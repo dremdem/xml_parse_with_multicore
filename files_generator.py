@@ -2,25 +2,11 @@
 Generate ZIP and XML files
 """
 import random
-import string
 import zipfile
 import os
 import xml.etree.cElementTree as ET
 
-from utils import delete_files
-
-
-def get_random_string() -> str:
-    string_length = random.randint(5, 30)
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=string_length))
-
-
-def get_random_unique_string(string_list: list) -> str:
-    unique_string = None
-    while unique_string in string_list if unique_string else True:
-        unique_string = get_random_string()
-
-    return unique_string
+from utils import delete_files, get_random_string, get_random_unique_string
 
 
 def generate_xml_file(filename: str, id_list: list):
