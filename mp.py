@@ -1,37 +1,22 @@
 """
-Main module for the test task
+Main module for the assignment
 """
 import argparse
 import pathlib
 import timeit
 import multiprocessing
 import logging
-from logging.handlers import RotatingFileHandler
 
 from files_generator import generate_zip_file
 from files_parser import parse_all_files
-from utils import delete_files, check_path
+from utils import delete_files, check_path, log_setup
 
 NUMBER_OF_CORES = multiprocessing.cpu_count()
 DEFAULT_FILEPATH = pathlib.Path().absolute()
 
 if __name__ == '__main__':
 
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
-
-    file_logger = RotatingFileHandler("mp.log", maxBytes=5000, backupCount=10)
-    file_logger.setLevel(logging.INFO)
-    formatter = logging.Formatter(
-        u'[%(asctime)s]  %(message)s')
-    file_logger.setFormatter(formatter)
-    root_logger.addHandler(file_logger)
-
-    console_logger = logging.StreamHandler()
-    console_logger.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(message)s')
-    console_logger.setFormatter(formatter)
-    root_logger.addHandler(console_logger)
+    log_setup()
 
     parser = argparse.ArgumentParser(
         description='XML generator and parser with a multiprocessing feature.')
@@ -42,10 +27,9 @@ if __name__ == '__main__':
     parser.add_argument('-xn', dest='number_of_xml', type=int, default=100,
                         help='Number of XML-files in the every ZIP-file. 100 by default.')
     parser.add_argument('-mp', dest='use_mp', action='store_true',
-                        help='Enable multiprocessing. Disabled bay default.')
+                        help='Enable multiprocessing. Disabled by default.')
     parser.add_argument('-cn', dest='number_of_cores', type=int, default=NUMBER_OF_CORES,
                         help=f'Number of cores. {NUMBER_OF_CORES} by default')
-
     args = parser.parse_args()
 
     logging.info(
@@ -55,8 +39,10 @@ if __name__ == '__main__':
             - number of XML-files: {args.number_of_xml}
             - number of cores: {args.number_of_cores}""")
 
+    # init multiprocessing pool
     pool = multiprocessing.Pool(processes=args.number_of_cores)
 
+    # delete ZIP-files from a previous run if any
     delete_files(args.filepath, 'zip')
 
     # generate ZIP-files
@@ -76,4 +62,5 @@ if __name__ == '__main__':
     execution_time = stop - start
     logging.info(f"The ZIP-parsing is done. Execution time is {round(execution_time, 3)} seconds.")
 
+    # delete ZIP-files from the current run
     delete_files(args.filepath, 'zip')

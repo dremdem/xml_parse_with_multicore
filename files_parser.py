@@ -1,5 +1,5 @@
 """
-Parse ZIP-files by using multi-core processing
+Parse ZIP-files
 """
 
 import os
@@ -11,6 +11,12 @@ import xml.etree.cElementTree as ET
 
 
 def read_xml_file(xml_file) -> dict:
+    """
+    Read XML-file
+    :param xml_file:
+    :return: dict with the following structure:
+    {id: '<id>', 'level': <level>, 'objects': [<object_name1>, <object_name2>], ... }
+    """
     xml_dict = {}
 
     xml = ET.parse(xml_file)
@@ -25,6 +31,11 @@ def read_xml_file(xml_file) -> dict:
 
 
 def read_zip_file(filename: str) -> list:
+    """
+    Read ZIP file
+    :param filename:
+    :return: list of dicts
+    """
     zip_list = []
 
     with zipfile.ZipFile(filename) as z:
@@ -36,10 +47,20 @@ def read_zip_file(filename: str) -> list:
 
 
 def read_zip_files(filepath: str, pool, cores_quantity, use_mp: bool = False) -> list:
+    """
+    Read ZIP-files from the certain file path
+    :param filepath:
+    :param pool: link to the multiprocessing pool object
+    :param cores_quantity: number of cores the multiprocessing
+    :param use_mp: Enable of multiprocessing
+    :return: list of all XML dicts
+    """
     main_list = []
 
+    # build list of ZIP-files in the folder
     zip_files = [f for f in next(os.walk(filepath))[2] if f.endswith('.zip')]
 
+    # slice the task of reading ZIP-files to a chunks and run it asynchronous
     if use_mp:
         chunk_size = len(zip_files) // cores_quantity
         zip_files_chunks = list(list_by_chunks(zip_files, chunk_size))
@@ -47,6 +68,7 @@ def read_zip_files(filepath: str, pool, cores_quantity, use_mp: bool = False) ->
             res = [pool.apply_async(read_zip_file, (file,)) for file in chunk]
             for i in res:
                 main_list += i.get()
+    #  use straightforward method without any async
     else:
         for file in [f for f in next(os.walk(filepath))[2] if f.endswith('.zip')]:
             main_list += read_zip_file(file)
@@ -57,12 +79,22 @@ def read_zip_files(filepath: str, pool, cores_quantity, use_mp: bool = False) ->
 
 
 def write_csv_file(filename: str, csv_list: list):
+    """
+    Write CSV-list into file
+    :param filename:
+    :param csv_list:
+    """
     with open(filename, 'w') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=';')
         csv_writer.writerows(csv_list)
 
 
 def parse_chunk(zip_list):
+    """
+    Parsing list of dict from XML-files to specified structure
+    :param zip_list:
+    :return: set (csv_list1: list, csv_list2: list)
+    """
     csv_list1 = []
     csv_list2 = []
 
@@ -87,13 +119,15 @@ def list_by_chunks(main_list, size_of_chuck):
 def parse_all_files(filepath: str, pool, cores_quantity, use_mp: bool = False):
     """
     Parse all ZIP-file by filepath
+    :param filepath:
+    :param pool: link to the multiprocessing pool object
+    :param cores_quantity: number of cores the multiprocessing
+    :param use_mp: Enable of multiprocessing
     """
-
-    # Structure of element in a main list:
-    # [{id: '<id>', 'level': <level>, 'objects': [<object_name1>, <object_name2>], ... }]
 
     main_list = read_zip_files(filepath, pool, cores_quantity, use_mp=use_mp)
 
+    # slice the task of parsing lists to chunks and run it asynchronous
     if use_mp:
         len_of_chunk = len(main_list) // cores_quantity
 
@@ -105,7 +139,10 @@ def parse_all_files(filepath: str, pool, cores_quantity, use_mp: bool = False):
         for chunk in results:
             for i in chunk.get():
                 csv_list1 += i[0]
+                # :TODO IndexError: list index out of range when cores_quantity=7, zip_files=200
                 csv_list2 += i[1]
+
+    #  use straightforward method without any async
     else:
         csv_list1, csv_list2 = parse_chunk(main_list)
 

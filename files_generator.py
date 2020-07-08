@@ -10,6 +10,11 @@ from utils import delete_files, get_random_string, get_random_unique_string
 
 
 def generate_xml_file(filename: str, id_list: list):
+    """
+    Generate a XML-file with the particular structure
+    :param filename:
+    :param id_list: list of IDs should be unique within every run of this program
+    """
     root = ET.Element('root')
     ET.SubElement(root, "var", attrib={"name": 'id', 'value': get_random_unique_string(id_list)})
     ET.SubElement(root, "var", attrib={"name": 'level', 'value': str(random.randint(1, 100))})
@@ -24,8 +29,11 @@ def generate_xml_file(filename: str, id_list: list):
 
 def generate_zip_file(filename: str, filepath: str, number_of_xml: int, id_list: list):
     """
-
-    :return: filepath to newly created file
+    Generate ZIP-file with XML-files inside
+    :param filename:
+    :param filepath:
+    :param number_of_xml:
+    :param id_list: list of IDs should be unique within every run of this program
     """
 
     for i in range(number_of_xml):
