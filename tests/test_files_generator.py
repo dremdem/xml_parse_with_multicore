@@ -25,4 +25,5 @@ def test_get_random_unique_string():
 def test_generate_zip_file():
     id_list = []
     generate_zip_file('zip1.zip', filepath, 100, id_list)
+    assert False
 
